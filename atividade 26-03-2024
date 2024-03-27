@@ -1,0 +1,45 @@
+-- Quantidade de filme por classificação
+select classificacao, count(classificacao) 
+from filme
+where classificacao in ('PG','G','NC-17','PG-13','R')
+GROUP BY classificacao;
+
+-- Tempo medio dos filmes do catalogo, por classificação
+select classificacao, avg(duracao_do_filme) 
+from filme
+where classificacao in ('PG','G','NC-17','PG-13','R')
+GROUP BY classificacao;
+
+-- Quantidade de filmes feitos por Ator
+select * from ator;
+
+select ator_id, count(filme_id)
+from filme_ator
+group by ator_id;
+
+-- Valor médio de vendas por funcionário, maior venda e menor venda
+select * from pagamento;
+
+SELECT funcionario_id, avg(valor), max(valor), min(valor) 
+from pagamento 
+GROUP BY funcionario_id; 
+
+-- Lista de filmes da categoria, G, M, W
+select * from filme;
+
+select titulo, classificacao 
+from filme
+where classificacao in ('G','M','W')
+GROUP BY titulo, classificacao;
+
+-- Lista de atores que o nome inicie com A
+select primeiro_nome, ultimo_nome
+from ator
+where primeiro_nome like 'A%';
+
+-- Quantidade de Filmes por Loja
+select * from inventario;
+
+select loja_id, count(filme_id)
+from inventario
+group by loja_id;
