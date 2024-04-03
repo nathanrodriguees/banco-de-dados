@@ -1,0 +1,120 @@
+CREATE DATABASE loja_tenis;
+USE loja_tenis;
+
+CREATE TABLE cliente(
+id INT AUTO_INCREMENT,
+nome VARCHAR(120),
+cpf VARCHAR(15),
+rua	VARCHAR(255),
+nr INT,
+bairro VARCHAR(120),
+CONSTRAINT pk_cliente PRIMARY KEY (id)
+);
+
+CREATE TABLE empresa(
+id INT AUTO_INCREMENT,
+nome VARCHAR(120),
+cnpj VARCHAR(18),
+CONSTRAINT pk_empresa PRIMARY KEY (id)
+);
+
+CREATE TABLE tenis(
+id INT AUTO_INCREMENT,
+marca VARCHAR(20),
+modelo VARCHAR(20),
+preco FLOAT(7, 2),
+CONSTRAINT pk_tenis PRIMARY KEY (id)
+);
+
+CREATE TABLE pedido(
+id INT AUTO_INCREMENT,
+dt_pedido DATE,
+id_cliente INT,
+id_empresa INT,
+CONSTRAINT pk_pedido PRIMARY KEY (id),
+CONSTRAINT fk_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id),
+CONSTRAINT fk_empresa FOREIGN KEY (id_empresa) REFERENCES empresa(id)
+);
+
+CREATE TABLE itens_pedido(
+id INT AUTO_INCREMENT,
+tamanho INT,
+preco FLOAT(7, 2),
+id_tenis INT,
+id_pedido INT,
+CONSTRAINT pk_itens_pedido PRIMARY KEY (id),
+CONSTRAINT fk_tenis FOREIGN KEY (id_tenis) REFERENCES tenis(id),
+CONSTRAINT fk_pedido FOREIGN KEY (id_pedido) REFERENCES pedido(id)
+);
+
+INSERT INTO cliente (nome, cpf, rua, nr, bairro)
+VALUES ('Nathan', '111.111.111-11', 'Maria Madalena de Jesus', 181, 'Jd. das Margaridas'),
+	   ('Larissa','222.222.222-22', 'Guaruja', 484, 'Vale do Sol'),
+	   ('Pablo','333.333.333-33', 'Renato da Cunha', 28, 'Guaruja');
+       
+INSERT INTO empresa (nome, cnpj)
+VALUES ('World Tennis', '75.572.430/0001-87'),
+	   ('Centauro','70.008.228/0001-03');
+       
+INSERT INTO tenis (marca, modelo, preco)
+VALUES ('Nike','Air max 90', 1000.00),
+	   ('Adidas', 'Superstar', 349.99),
+	   ('Puma', 'Disc Bape', 2790.00);
+       
+INSERT INTO pedido (dt_pedido, id_cliente, id_empresa)
+VALUES ('2024-01-15', 1 , 2),
+	   ('2023-12-20', 3, 1),
+       ('2022-10-05', 2, 1),
+	   ('1997-02-27', 1 , 2);
+       
+INSERT INTO itens_pedido (tamanho, preco, id_tenis, id_pedido)
+VALUES (42, 1000.00, 1 , 3),
+	   (36, 2790.00, 3, 3),
+       (41, 349.99, 2, 3),
+       
+       (38, 2790.00, 3 , 1),
+	   (44, 1000.00, 1, 1),
+       
+       (40, 1000.00, 1 , 2),
+	   (34, 349.99, 2, 2),
+       (40, 2790.00, 3, 2),
+       (34, 1000.00, 1, 2),
+       
+       (40, 1000.00, 1 , 4);
+       
+-- Utilização da função JOIN
+SELECT *  FROM pedido p JOIN cliente c ON p.id_cliente = c.id;
+
+-- Utilização GROUP BY com COUNT
+SELECT id_cliente, COUNT(id_cliente) qtdCompra
+	FROM pedido
+    GROUP BY id_cliente;
+
+-- Utilização do AVG com Função matematica FLOOR
+SELECT id_pedido, FLOOR(AVG(preco))
+	FROM itens_pedido
+    GROUP BY id_pedido;
+    
+-- Valor máximo do pedido
+SELECT id_pedido, max(preco)
+	FROM itens_pedido
+    GROUP BY id_pedido;	
+    
+-- Valor minimo do pedido
+SELECT id_pedido, min(preco)
+	FROM itens_pedido
+    GROUP BY id_pedido;	
+    
+-- Soma do preço dos itens do pedido
+SELECT id_pedido, sum(preco)
+	FROM itens_pedido
+    GROUP BY id_pedido;	
+    
+-- Utilização do ORDEM BY e ordenando em ordem crescente
+SELECT id_pedido, sum(preco) somaPedido
+	FROM itens_pedido
+    GROUP BY id_pedido
+	ORDER BY sum(preco) ASC;
+
+-- Utilização da função texto
+SELECT CONCAT(nome, ' - ', cpf) FROM cliente; 
