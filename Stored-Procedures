@@ -1,0 +1,52 @@
+-- Delimitador da Procedure
+DELIMITER $$ 
+
+-- Criação da Procedure "nome" e declaração do parâmetro de entrada "banco" e seu tipo
+CREATE PROCEDURE nome(IN banco VARCHAR(10))
+
+-- Começo
+BEGIN 
+	
+    -- Declarando uma variavel e o seu tipo
+    DECLARE x VARCHAR(100); 
+    
+    -- Atribuindo valor à variavel
+    SET x = 'Nathan Rodrigues'; 
+    
+    -- Retornando o valor da variavel e o parâmetro de entrada
+    SELECT x, banco; 
+
+-- Fim com delimitador
+END $$ 
+
+-- Retornando o delimitador ao padrão "ponto e virgula"
+DELIMITER ; 
+
+-- Chamando a procedure nome() e atribuindo um valor ao parâmetro "banco"
+CALL nome('SQL'); 
+
+-- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+DELIMITER $$
+CREATE PROCEDURE tempoAluguel(IN idAluguel INT, OUT tempoAluguel INT)
+BEGIN
+
+	DECLARE dtA DATETIME;
+    DECLARE dtD DATETIME;
+    
+    -- Atribuindo a data_do_aluguel para a variavel dtA, aonde o id_aluguel for igual ao meu 
+    -- parametro de entrada idAluguel.
+    SET dtA = (SELECT data_de_aluguel FROM aluguel WHERE aluguel_id = idAluguel);
+    
+    -- Atribuindo a data_de_devolucao para a variavel dtD, aonde o id_aluguel for igual ao meu 
+    -- parametro de entrada idAluguel.
+    SET dtD = (SELECT data_de_devolucao FROM aluguel WHERE aluguel_id = idAluguel);
+    
+    SET tempoAluguel = dtD - dtA;
+    
+END $$
+DELIMITER ;
+
+-- Passando o idAluguel no parametro de entrada e criando uma variavel de saida "aluguel" para
+-- poder ver o valor do parametro de saida
+CALL tempoAluguel(1, @aluguel);
+Select @aluguel;
