@@ -1,3 +1,4 @@
+-- Estrutura da Procedure com exemplo Básico
 -- Delimitador da Procedure
 DELIMITER $$ 
 
@@ -26,6 +27,7 @@ DELIMITER ;
 CALL nome('SQL'); 
 
 -- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Usando parâmetros de entrada, saída e estrutura condicional
 CREATE DATABASE StoredProcedure;
 USE StoredProcedure;
 
@@ -37,14 +39,12 @@ dt_nascimento DATE
 
 INSERT INTO cliente (nome, dt_nascimento)
 VALUES ('Nathan', '2000-02-27'),
-	   ('Nathalia', '1998-05-21'),
+       ('Nathalia', '1998-05-21'),
        ('João', '2010-07-09'),
        ('Marcos', '1989-06-22'),
-	   ('Gabriel', '2013-03-13'),
+       ('Gabriel', '2013-03-13'),
        ('Matheus', '1997-01-24');
        
-      
-
 SELECT * FROM cliente;
 SELECT dt_nascimento FROM cliente WHERE id = 2;
 
@@ -52,7 +52,7 @@ DELIMITER $$
 CREATE PROCEDURE idade (IN idCliente INT, OUT idadeCliente INT, OUT mn VARCHAR(10))
 BEGIN
 
-	DECLARE dt DATE;
+    DECLARE dt DATE;
     
     -- Atribuindo a dt_nascimento para a variavel dt, aonde o id for igual ao meu 
     -- parametro de entrada idAluguel.
@@ -62,9 +62,9 @@ BEGIN
     
     -- Criando uma condicional aonda, para verificar se o cliente é maior ou menor de idade
     IF(idadeCliente >= 18) THEN
-		SET mn = 'Maior';
-	ELSE
-		SET mn = 'Menor';
+	SET mn = 'Maior';
+ELSE
+	SET mn = 'Menor';
     END IF;
     
 END $$
@@ -74,3 +74,54 @@ DELIMITER ;
 -- poder ver o valor do parametro de saida
 CALL idade(1, @resposta, @MaiorOuMenor);
 Select @resposta, @MaiorOuMenor;
+
+-- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Estrutura de repetição utilizando While
+DELIMITER $$
+CREATE PROCEDURE loopWhile(IN max INT, OUT soma INT)
+BEGIN
+	
+    DECLARE x INT DEFAULT 0;
+    
+    -- Enquanto minha variavel x for menor que o parametro de entrada, execute o código
+    WHILE(x < max) DO
+	-- x recebe ele mesmo mais 1
+	SET x = x + 1;
+    END WHILE;
+    
+    -- Depois de passsar pela estrutura de repetição, atribui-se o valor de x para o parametro de saida
+    SET soma = x;
+
+END $$
+DELIMITER ;
+
+CALL loopWhile(100, @resp);
+SELECT @resp;
+
+-- Estrutura de repetição utilizando Loop
+DELIMITER $$
+CREATE PROCEDURE loopLoop(IN max INT, OUT soma INT)
+BEGIN
+	
+    DECLARE x INT DEFAULT 0;
+    
+	-- Nomeando o loop para controlar o seu fluxo
+	meuloop: LOOP 
+		-- Se x for maior ou igual a max, o loop será encerrado.
+		IF (x >= max) THEN
+        		-- Leave: usado para sair do loop meuloop após a condição não for mais verdadeira.
+			LEAVE meuloop;
+        	END IF;
+        	SET x = x + 1;
+    	END LOOP;
+    
+    -- Depois de passsar pela estrutura de repetição, atribui-se o valor de x para o parametro de saida
+    SET soma = x;
+
+END $$
+DELIMITER ;
+
+CALL loopLoop(100, @resp);
+SELECT @resp;
+
+
