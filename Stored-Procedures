@@ -26,27 +26,51 @@ DELIMITER ;
 CALL nome('SQL'); 
 
 -- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE DATABASE StoredProcedure;
+USE StoredProcedure;
+
+CREATE TABLE cliente (
+id INT AUTO_INCREMENT PRIMARY KEY,
+nome VARCHAR(120),
+dt_nascimento DATE
+);
+
+INSERT INTO cliente (nome, dt_nascimento)
+VALUES ('Nathan', '2000-02-27'),
+	   ('Nathalia', '1998-05-21'),
+       ('João', '2010-07-09'),
+       ('Marcos', '1989-06-22'),
+	   ('Gabriel', '2013-03-13'),
+       ('Matheus', '1997-01-24');
+       
+      
+
+SELECT * FROM cliente;
+SELECT dt_nascimento FROM cliente WHERE id = 2;
+
 DELIMITER $$
-CREATE PROCEDURE tempoAluguel(IN idAluguel INT, OUT tempoAluguel INT)
+CREATE PROCEDURE idade (IN idCliente INT, OUT idadeCliente INT, OUT mn VARCHAR(10))
 BEGIN
 
-	DECLARE dtA DATETIME;
-    DECLARE dtD DATETIME;
+	DECLARE dt DATE;
     
-    -- Atribuindo a data_do_aluguel para a variavel dtA, aonde o id_aluguel for igual ao meu 
+    -- Atribuindo a dt_nascimento para a variavel dt, aonde o id for igual ao meu 
     -- parametro de entrada idAluguel.
-    SET dtA = (SELECT data_de_aluguel FROM aluguel WHERE aluguel_id = idAluguel);
+    SET dt = (SELECT dt_nascimento FROM cliente WHERE id = idCliente);
     
-    -- Atribuindo a data_de_devolucao para a variavel dtD, aonde o id_aluguel for igual ao meu 
-    -- parametro de entrada idAluguel.
-    SET dtD = (SELECT data_de_devolucao FROM aluguel WHERE aluguel_id = idAluguel);
+    SET idadeCliente = year(now()) - year(dt);
     
-    SET tempoAluguel = dtD - dtA;
+    -- Criando uma condicional aonda, para verificar se o cliente é maior ou menor de idade
+    IF(idadeCliente >= 18) THEN
+		SET mn = 'Maior';
+	ELSE
+		SET mn = 'Menor';
+    END IF;
     
 END $$
 DELIMITER ;
 
--- Passando o idAluguel no parametro de entrada e criando uma variavel de saida "aluguel" para
+-- Passando o idCliente no parametro de entrada e criando uma variavel de saida "resposta" para
 -- poder ver o valor do parametro de saida
-CALL tempoAluguel(1, @aluguel);
-Select @aluguel;
+CALL idade(1, @resposta, @MaiorOuMenor);
+Select @resposta, @MaiorOuMenor;
